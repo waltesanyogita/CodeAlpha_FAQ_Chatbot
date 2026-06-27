@@ -1,200 +1,240 @@
 import streamlit as st
-from faq_data import faq_data
-from rapidfuzz import process
+import pandas as pd
+import nltk
+import random
+import time
 
-# -------------------------------
-# PAGE CONFIGURATION
-# -------------------------------
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# --------------------------------------------------
+# Download NLTK Resources
+# --------------------------------------------------
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt")
+
+try:
+    nltk.data.find("tokenizers/punkt_tab")
+except LookupError:
+    nltk.download("punkt_tab")
+
+try:
+    nltk.data.find("corpora/stopwords")
+except LookupError:
+    nltk.download("stopwords")
+
+# --------------------------------------------------
+# Streamlit Page Config
+# --------------------------------------------------
 st.set_page_config(
-    page_title="College FAQ Assistant",
-    page_icon="🎓",
+    page_title="AI FAQ Assistant",
+    page_icon="🤖",
     layout="wide"
 )
 
-# -------------------------------
-# CUSTOM CSS
-# -------------------------------
-
+# --------------------------------------------------
+# Custom CSS
+# --------------------------------------------------
 st.markdown("""
 <style>
 
 .main{
-    background:#f6f8fc;
+    background:#0f172a;
 }
 
 .block-container{
     padding-top:2rem;
 }
 
-.title{
+h1{
     text-align:center;
-    color:#1f77ff;
-    font-size:42px;
-    font-weight:bold;
 }
 
-.subtitle{
+.stChatMessage{
+    border-radius:15px;
+    padding:10px;
+}
+
+.suggestion{
     text-align:center;
-    color:gray;
-    margin-bottom:20px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# -------------------------------
-# TITLE
-# -------------------------------
+# --------------------------------------------------
+# Load FAQ
+# --------------------------------------------------
+data = pd.read_csv("faq.csv")
 
-st.markdown(
-"<div class='title'>🎓 College FAQ Assistant</div>",
-unsafe_allow_html=True
-)
+stop_words = set(stopwords.words("english"))
 
-st.markdown(
-"<div class='subtitle'>Ask anything about your college.</div>",
-unsafe_allow_html=True
-)
+# --------------------------------------------------
+# Preprocessing
+# --------------------------------------------------
+def preprocess(text):
 
-# -------------------------------
-# SESSION STATE
-# -------------------------------
+    text = str(text).lower()
 
+    words = word_tokenize(text)
+
+    words = [word for word in words if word.isalnum()]
+
+    words = [word for word in words if word not in stop_words]
+
+    return " ".join(words)
+
+data["Processed"] = data["Question"].apply(preprocess)
+
+# --------------------------------------------------
+# TF-IDF
+# --------------------------------------------------
+vectorizer = TfidfVectorizer()
+
+tfidf_matrix = vectorizer.fit_transform(data["Processed"])
+
+# --------------------------------------------------
+# Suggested Questions
+# --------------------------------------------------
+suggestions = [
+    "What is AI?",
+    "What is Machine Learning?",
+    "What is Deep Learning?",
+    "What is NLP?",
+    "What is Computer Vision?",
+    "What is ChatGPT?",
+    "What is TensorFlow?",
+    "What is PyTorch?",
+    "What is Generative AI?",
+    "Can AI replace humans?",
+    "What is reinforcement learning?",
+    "What is supervised learning?"
+]
+
+# --------------------------------------------------
+# Sidebar
+# --------------------------------------------------
+with st.sidebar:
+
+
+    st.write("### Example Questions")
+
+    for q in random.sample(suggestions,5):
+        st.write("•",q)
+
+    st.markdown("---")
+
+    if st.button("🗑 Clear Chat"):
+
+        st.session_state.messages=[]
+
+        st.rerun()
+
+# --------------------------------------------------
+# Welcome
+# --------------------------------------------------
+st.title("🤖 AI FAQ Assistant")
+
+st.caption("Ask me anything about Artificial Intelligence.")
+
+# --------------------------------------------------
+# Session State
+# --------------------------------------------------
 if "messages" not in st.session_state:
-    st.session_state.messages = []
 
-if "first_question" not in st.session_state:
-    st.session_state.first_question = False
+    st.session_state.messages=[]
 
-# -------------------------------
-# SIDEBAR
-# -------------------------------
+# Display old messages
 
-st.sidebar.title("🎓 College Assistant")
+for message in st.session_state.messages:
 
-if st.sidebar.button("🗑 Clear Chat"):
+    with st.chat_message(message["role"]):
 
-    st.session_state.messages = []
-    st.session_state.first_question = False
-    st.rerun()
+        st.markdown(message["content"])
 
-st.sidebar.markdown("---")
+# --------------------------------------------------
+# Suggestion Buttons
+# --------------------------------------------------
+st.markdown("### 💡 Suggested Questions")
 
-st.sidebar.subheader("Example Questions")
+cols=st.columns(3)
 
-st.sidebar.write("• What courses are offered?")
-st.sidebar.write("• What are the college timings?")
-st.sidebar.write("• Is hostel accommodation available?")
-st.sidebar.write("• Does the college provide scholarships?")
-st.sidebar.write("• What is the fee structure?")
+sample=random.sample(suggestions,6)
 
-# -------------------------------
-# PREPARE DATA
-# -------------------------------
+for i,q in enumerate(sample):
 
-questions = list(faq_data.keys())
+    if cols[i%3].button(q,use_container_width=True):
 
-# -------------------------------
-# WELCOME MESSAGE
-# -------------------------------
+        st.session_state.selected=q
 
-if not st.session_state.first_question:
+# --------------------------------------------------
+# Chat Input
+# --------------------------------------------------
+prompt=st.chat_input("Ask anything about AI...")
 
-    st.info("""
-👋 **Welcome!**
+if "selected" in st.session_state:
 
-I am your **College FAQ Assistant**.
+    prompt=st.session_state.pop("selected")
+    # --------------------------------------------------
+# Process User Question
+# --------------------------------------------------
+if prompt:
 
-You can ask me questions about:
+    # Display user message
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-- 🎓 Admissions
-- 🏠 Hostel
-- 💰 Fees
-- 📚 Courses
-- 💼 Placements
-- 📖 Library
-- 🏆 Scholarships
-- ⚽ Sports
-
-Start typing your question below.
-""")
-
-# -------------------------------
-# DISPLAY CHAT HISTORY
-# -------------------------------
-
-for msg in st.session_state.messages:
-
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
-
-# -------------------------------
-# FIND ANSWER
-# -------------------------------
-
-def get_answer(user_question):
-
-    match = process.extractOne(
-        user_question,
-        questions
-    )
-
-    if match is None:
-        return """
-❌ Sorry, I couldn't find an answer.
-
-Please ask questions related to the college.
-"""
-
-    matched_question = match[0]
-    score = match[1]
-
-    if score < 65:
-        return """
-❌ Sorry, I couldn't find an answer.
-
-Try asking about:
-
-• Admissions
-• Courses
-• Hostel
-• Fees
-• Placements
-• Scholarships
-• Library
-• Transport
-• Sports
-"""
-
-    return faq_data[matched_question]
-# -------------------------------
-# USER INPUT
-# -------------------------------
-
-user_input = st.chat_input("💬 Ask your question here...")
-
-# -------------------------------
-# PROCESS MESSAGE
-# -------------------------------
-
-if user_input:
-
-    # Hide welcome message after first question
-    st.session_state.first_question = True
-
-    # Get chatbot answer
-    answer = get_answer(user_input)
-
-    # Save user message
     st.session_state.messages.append(
-        {
-            "role": "user",
-            "content": user_input
-        }
+        {"role": "user", "content": prompt}
     )
 
-    # Save assistant message
+    # Preprocess question
+    processed_input = preprocess(prompt)
+
+    # Convert to TF-IDF vector
+    input_vector = vectorizer.transform([processed_input])
+
+    # Calculate similarity
+    similarity = cosine_similarity(input_vector, tfidf_matrix)
+
+    max_score = similarity.max()
+
+    # Typing animation
+    with st.chat_message("assistant"):
+
+        thinking = st.empty()
+
+        for text in [
+            "🧠 Thinking.",
+            "🧠 Thinking..",
+            "🧠 Thinking..."
+        ]:
+            thinking.markdown(text)
+            time.sleep(0.3)
+
+        # Find best answer
+        if max_score >= 0.30:
+
+            best_match = similarity.argmax()
+
+            answer = data.iloc[best_match]["Answer"]
+
+        else:
+
+            answer = (
+                "😔 Sorry, I couldn't find a relevant answer.\n\n"
+                "Try asking something related to Artificial Intelligence."
+            )
+
+        thinking.empty()
+
+        st.markdown(answer)
+
     st.session_state.messages.append(
         {
             "role": "assistant",
@@ -202,24 +242,16 @@ if user_input:
         }
     )
 
-    # Refresh page
-    st.rerun()
-
-# -------------------------------
-# FOOTER
-# -------------------------------
-
+# --------------------------------------------------
+# Footer
+# --------------------------------------------------
 st.markdown("---")
 
 st.markdown(
     """
-    <div style="
-        text-align:center;
-        color:gray;
-        font-size:14px;
-        padding-bottom:10px;">
-        © 2026 College FAQ Assistant
-    </div>
+    <div style='text-align:center;color:gray;font-size:14px'>
+        🤖 AI FAQ Assistant<br>
+    
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )

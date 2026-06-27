@@ -1,0 +1,62 @@
+Question,Answer
+What is Artificial Intelligence?,Artificial Intelligence is the simulation of human intelligence by machines.
+What is AI?,AI stands for Artificial Intelligence.
+What is Machine Learning?,Machine Learning is a branch of AI that allows computers to learn from data.
+What is Deep Learning?,Deep Learning is a subset of Machine Learning that uses neural networks.
+What is NLP?,Natural Language Processing enables computers to understand and process human language.
+What is Computer Vision?,Computer Vision enables machines to understand images and videos.
+What is Generative AI?,Generative AI creates new content such as text images and videos.
+What is ChatGPT?,ChatGPT is a conversational AI model developed by OpenAI.
+Who developed ChatGPT?,ChatGPT was developed by OpenAI.
+What is OpenAI?,OpenAI is an AI research and deployment company.
+What is a neural network?,A neural network is a model inspired by the structure of the human brain.
+What is supervised learning?,Supervised learning uses labeled data to train models.
+What is unsupervised learning?,Unsupervised learning finds patterns in unlabeled data.
+What is reinforcement learning?,Reinforcement learning teaches an agent through rewards and penalties.
+What is a dataset?,A dataset is a collection of data used to train AI models.
+What is training data?,Training data is used to teach a machine learning model.
+What is testing data?,Testing data is used to evaluate a trained model.
+What is model accuracy?,Accuracy measures how often predictions are correct.
+What is overfitting?,Overfitting happens when a model memorizes training data instead of learning patterns.
+What is underfitting?,Underfitting happens when a model cannot capture patterns in the data.
+What is TensorFlow?,TensorFlow is an open-source machine learning framework.
+What is PyTorch?,PyTorch is an open-source deep learning framework.
+What is scikit-learn?,Scikit-learn is a Python library for machine learning.
+Why is Python used for AI?,Python is simple and has many AI libraries.
+What is data preprocessing?,Data preprocessing cleans and prepares data before training.
+What is feature engineering?,Feature engineering creates useful input features for AI models.
+What is classification?,Classification predicts categories or labels.
+What is regression?,Regression predicts continuous numerical values.
+What is clustering?,Clustering groups similar data points together.
+What is KNN?,K Nearest Neighbors is a machine learning algorithm.
+What is Decision Tree?,Decision Tree is a supervised learning algorithm for classification and regression.
+What is Random Forest?,Random Forest combines multiple decision trees to improve accuracy.
+What is SVM?,Support Vector Machine is a supervised learning algorithm.
+What is Linear Regression?,Linear Regression predicts numerical values.
+What is Logistic Regression?,Logistic Regression predicts class labels.
+What is prompt engineering?,Prompt engineering is the process of creating effective prompts for AI.
+What is tokenization?,Tokenization splits text into smaller units called tokens.
+What is sentiment analysis?,Sentiment analysis identifies emotions in text.
+What is image recognition?,Image recognition identifies objects in images.
+What is speech recognition?,Speech recognition converts speech into text.
+What is text generation?,Text generation creates human-like text using AI.
+What is an AI chatbot?,An AI chatbot interacts with users using artificial intelligence.
+What is recommendation system?,Recommendation systems suggest products or content based on user preferences.
+What is AI ethics?,AI ethics focuses on responsible development and use of AI.
+What is AI bias?,AI bias occurs when AI produces unfair or inaccurate results.
+Can AI replace humans?,AI can automate tasks but cannot fully replace human creativity and judgment.
+Is AI dangerous?,AI can be risky if misused but is beneficial when used responsibly.
+What are AI applications?,AI is used in healthcare education finance transportation and entertainment.
+What is automation?,Automation uses technology to perform tasks automatically.
+What is OCR?,OCR converts images of text into editable digital text.
+What is face recognition?,Face recognition identifies people using facial features.
+What is voice assistant?,A voice assistant responds to spoken commands using AI.
+What is Google Gemini?,Google Gemini is a family of AI models developed by Google.
+What is Microsoft Copilot?,Microsoft Copilot is an AI assistant integrated into Microsoft products.
+What is hallucination in AI?,AI hallucination occurs when an AI generates incorrect or fabricated information.
+What is a Large Language Model?,A Large Language Model is trained on massive amounts of text to understand and generate language.
+How does ChatGPT work?,ChatGPT predicts the next word in a sequence using deep learning.
+Can AI write code?,Yes AI can generate and explain programming code.
+Can AI create images?,Yes AI can generate images from text prompts.
+What is the future of AI?,The future of AI includes smarter automation and more advanced intelligent systems.
+What skills are needed for AI?,Python mathematics machine learning and data analysis are essential AI skills.
